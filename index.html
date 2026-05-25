@@ -17,14 +17,19 @@
     <link rel="stylesheet" href="./styles.css" />
     <script>
       (function () {
-        const saved = localStorage.getItem("aid-theme");
-        const theme =
-          saved === "light" || saved === "dark"
-            ? saved
-            : window.matchMedia("(prefers-color-scheme: light)").matches
-              ? "light"
-              : "dark";
-        document.documentElement.setAttribute("data-theme", theme);
+        try {
+          var saved = localStorage.getItem("aid-theme");
+          var theme =
+            saved === "light" || saved === "dark"
+              ? saved
+              : window.matchMedia("(prefers-color-scheme: light)").matches
+                ? "light"
+                : "dark";
+          document.documentElement.setAttribute("data-theme", theme);
+          document.documentElement.style.colorScheme = theme;
+        } catch (_error) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        }
       })();
     </script>
   </head>
@@ -99,6 +104,7 @@
       <p>Built for Artificial Intelligence Day in CUHK-Shenzhen.</p>
     </footer>
 
+    <script src="./theme.js"></script>
     <script type="module" src="./script.js"></script>
   </body>
 </html>

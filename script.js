@@ -1,7 +1,5 @@
 import { getBankById, getDifficultyOptions, problemBanks } from "./data/problemBanks.js";
 
-const THEME_STORAGE_KEY = "aid-theme";
-
 const elements = {
   bankTabs: document.querySelector("#bank-tabs"),
   searchInput: document.querySelector("#search-input"),
@@ -11,9 +9,6 @@ const elements = {
   description: document.querySelector("#active-bank-description"),
   stats: document.querySelector("#stats"),
   problemList: document.querySelector("#problem-list"),
-  themeToggle: document.querySelector("#theme-toggle"),
-  themeToggleIcon: document.querySelector(".theme-toggle-icon"),
-  themeToggleLabel: document.querySelector(".theme-toggle-label"),
 };
 
 const state = {
@@ -152,36 +147,6 @@ function render() {
   renderProblems(filteredProblems);
 }
 
-function getCurrentTheme() {
-  return document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
-}
-
-function updateThemeToggle(theme) {
-  const isDark = theme === "dark";
-
-  elements.themeToggle.setAttribute(
-    "aria-label",
-    isDark ? "Switch to light mode" : "Switch to dark mode"
-  );
-  elements.themeToggle.title = isDark ? "Switch to light mode" : "Switch to dark mode";
-  elements.themeToggleIcon.textContent = isDark ? "☀" : "☾";
-  elements.themeToggleLabel.textContent = isDark ? "Light mode" : "Dark mode";
-}
-
-function setTheme(theme) {
-  document.documentElement.setAttribute("data-theme", theme);
-  localStorage.setItem(THEME_STORAGE_KEY, theme);
-  updateThemeToggle(theme);
-}
-
-function setupThemeToggle() {
-  updateThemeToggle(getCurrentTheme());
-
-  elements.themeToggle.addEventListener("click", () => {
-    setTheme(getCurrentTheme() === "dark" ? "light" : "dark");
-  });
-}
-
 function setupEventListeners() {
   elements.searchInput.addEventListener("input", (event) => {
     state.search = event.target.value.trim();
@@ -207,7 +172,6 @@ function init() {
     return;
   }
 
-  setupThemeToggle();
   setupEventListeners();
   render();
 }
