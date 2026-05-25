@@ -1,4 +1,5 @@
 import { getBankById, getDifficultyOptions, problemBanks } from "./data/problemBanks.js";
+import { renderLatexInElement } from "./utils/latex.js";
 
 const elements = {
   bankTabs: document.querySelector("#bank-tabs"),
@@ -16,15 +17,24 @@ const state = {
   search: "",
   status: "all",
   difficulty: "all",
+  expandedProblemIds: new Set(),
 };
 
 function applyFilters(problems) {
   return problems.filter((problem) => {
+    const searchable = [
+      problem.id,
+      problem.title,
+      problem.topic,
+      problem.summary,
+      problem.question,
+      problem.answer,
+    ]
+      .filter(Boolean)
+      .join(" ");
+
     const matchesSearch =
-      state.search.length === 0 ||
-      `${problem.id} ${problem.title} ${problem.topic} ${problem.summary}`
-        .toLowerCase()
-        .includes(state.search.toLowerCase());
+      state.search.length === 0 || searchable.toLowerCase().includes(state.search.toLowerCase());
 
     const matchesStatus = state.status === "all" || problem.status === state.status;
     const matchesDifficulty = state.difficulty === "all" || problem.difficulty === state.difficulty;
@@ -53,7 +63,99 @@ function renderStats(bank, visibleProblems) {
   );
 }
 
-function renderProblems(problems) {
+function formatMarkdownLite(text) {
+  return text
+    .split(/\n{2,}/)
+    .map((paragraph) => `<p>${paragraph.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")}</p>`)
+    .join("");
+}
+
+function toggleProblem(problemId) {
+  if (state.expandedProblemIds.has(problemId)) {
+    state.expandedProblemIds.delete(problemId);
+  } else {
+    state.expandedProblemIds.add(problemId);
+  }
+
+  renderProblemCards(getActiveFilteredProblems());
+}
+
+function getActiveFilteredProblems() {
+  const activeBank = getBankById(state.activeBankId);
+  if (!activeBank) {
+    return [];
+  }
+
+  return applyFilters(activeBank.problems);
+}
+
+function createProblemCard(problem) {
+  const isExpanded = state.expandedProblemIds.has(problem.id);
+  const article = document.createElement("article");
+  article.className = `problem-card${isExpanded ? " is-expanded" : ""}`;
+  article.dataset.problemId = problem.id;
+
+  const sourceLink = problem.source
+    ? `<a class="problem-source" href="${problem.source}" target="_blank" rel="noopener noreferrer">View source</a>`
+    : "";
+
+  article.innerHTML = `
+    <button
+      class="problem-header"
+      type="button"
+      aria-expanded="${isExpanded ? "true" : "false"}"
+      aria-controls="details-${problem.id}"
+    >
+      <span class="problem-header-main">
+        <span class="problem-title">${problem.id}: ${problem.title}</span>
+        <span class="problem-meta"><strong>Topic:</strong> ${problem.topic}</span>
+        <span class="problem-meta problem-summary">${problem.summary}</span>
+      </span>
+      <span class="problem-header-side">
+        <span class="badges">
+          <span class="badge ${problem.status}">${problem.status.toUpperCase()}</span>
+          <span class="badge difficulty">${problem.difficulty}</span>
+        </span>
+        <span class="expand-icon" aria-hidden="true">${isExpanded ? "▾" : "▸"}</span>
+      </span>
+    </button>
+    <div
+      id="details-${problem.id}"
+      class="problem-details${isExpanded ? " is-open" : ""}"
+      ${isExpanded ? "" : "hidden"}
+    >
+      <section class="problem-section">
+        <h4>Question</h4>
+        <div class="latex-content question-content"></div>
+      </section>
+      <section class="problem-section">
+        <h4>Answer</h4>
+        <div class="latex-content answer-content"></div>
+      </section>
+      ${sourceLink}
+    </div>
+  `;
+
+  const header = article.querySelector(".problem-header");
+  const questionContent = article.querySelector(".question-content");
+  const answerContent = article.querySelector(".answer-content");
+
+  questionContent.innerHTML = formatMarkdownLite(problem.question);
+  answerContent.innerHTML = formatMarkdownLite(problem.answer);
+
+  header.addEventListener("click", () => {
+    toggleProblem(problem.id);
+  });
+
+  if (isExpanded) {
+    renderLatexInElement(questionContent);
+    renderLatexInElement(answerContent);
+  }
+
+  return article;
+}
+
+function renderProblemCards(problems) {
   elements.problemList.innerHTML = "";
 
   if (problems.length === 0) {
@@ -64,23 +166,7 @@ function renderProblems(problems) {
     return;
   }
 
-  const cards = problems.map((problem) => {
-    const article = document.createElement("article");
-    article.className = "problem-card";
-    article.innerHTML = `
-      <div class="problem-title-row">
-        <h3 class="problem-title">${problem.id}: ${problem.title}</h3>
-        <div class="badges">
-          <span class="badge ${problem.status}">${problem.status.toUpperCase()}</span>
-          <span class="badge difficulty">${problem.difficulty}</span>
-        </div>
-      </div>
-      <p class="problem-meta"><strong>Topic:</strong> ${problem.topic}</p>
-      <p class="problem-meta">${problem.summary}</p>
-    `;
-    return article;
-  });
-
+  const cards = problems.map((problem) => createProblemCard(problem));
   elements.problemList.append(...cards);
 }
 
@@ -116,6 +202,7 @@ function renderBankTabs() {
       state.search = "";
       state.status = "all";
       state.difficulty = "all";
+      state.expandedProblemIds.clear();
       elements.searchInput.value = "";
       elements.statusFilter.value = "all";
       render();
@@ -131,7 +218,7 @@ function render() {
     elements.title.textContent = "No problem bank selected";
     elements.description.textContent = "";
     elements.stats.innerHTML = "";
-    renderProblems([]);
+    renderProblemCards([]);
     return;
   }
 
@@ -144,7 +231,7 @@ function render() {
 
   const filteredProblems = applyFilters(activeBank.problems);
   renderStats(activeBank, filteredProblems);
-  renderProblems(filteredProblems);
+  renderProblemCards(filteredProblems);
 }
 
 function setupEventListeners() {
@@ -168,7 +255,7 @@ function init() {
   if (problemBanks.length === 0) {
     elements.title.textContent = "No problem bank available";
     elements.description.textContent = "Add one in data/problemBanks.js to get started.";
-    renderProblems([]);
+    renderProblemCards([]);
     return;
   }
 

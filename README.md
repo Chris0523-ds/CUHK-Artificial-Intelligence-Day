@@ -24,27 +24,26 @@ Then visit `http://localhost:8080`.
 
 Edit `data/problemBanks.js` and append a new object to `problemBanks`:
 
+## Problem Data Fields
+
+Each problem supports:
+
+- `question`: LaTeX-friendly statement (use `$...$` inline, `$$...$$` display)
+- `answer`: solution, proof sketch, or known progress
+- `source`: optional reference URL (for example an Erdős Problems page)
+
+Example:
+
 ```js
 {
-  id: "your-bank-id",
-  name: "Your New Problem Bank",
-  description: "Short description",
-  year: 2026,
-  curator: "Your Team",
-  problems: [
-    {
-      id: "NEW-001",
-      title: "Problem title",
-      topic: "Topic",
-      difficulty: "Easy",
-      status: "open",
-      summary: "One-line summary"
-    }
-  ]
+  id: "Erdős-1",
+  title: "Distinct Subset Sums",
+  topic: "Number Theory",
+  difficulty: "Hard",
+  status: "open",
+  source: "https://www.erdosproblems.com/1",
+  summary: "Short preview shown in the collapsed card.",
+  question: "If $A \\subseteq \\{1,\\ldots,N\\}$ ... then $$N \\gg 2^n.$$",
+  answer: "Known progress with LaTeX formulas..."
 }
 ```
-
-Supported values:
-
-- `status`: `open` or `solved`
-- `difficulty`: any text (for example `Easy`, `Medium`, `Hard`)

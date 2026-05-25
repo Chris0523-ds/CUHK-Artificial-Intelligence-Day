@@ -291,7 +291,104 @@ html.theme-light .background-glow {
   border-radius: 12px;
   background: var(--surface-card);
   border: 1px solid var(--card-border);
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.problem-card.is-expanded {
+  border-color: var(--accent-border);
+  box-shadow: var(--shadow);
+}
+
+.problem-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.9rem;
+  align-items: flex-start;
   padding: 0.9rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.problem-header:hover {
+  background: rgba(116, 163, 255, 0.06);
+}
+
+.problem-header-main {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.problem-header-side {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  flex-shrink: 0;
+}
+
+.expand-icon {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.problem-details {
+  padding: 0 0.9rem 0.9rem;
+  border-top: 1px solid var(--card-border);
+}
+
+.problem-details.is-open {
+  display: block;
+}
+
+.problem-section {
+  margin-top: 0.85rem;
+}
+
+.problem-section h4 {
+  margin: 0 0 0.45rem;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.latex-content {
+  color: var(--text-subtle);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.latex-content p {
+  margin: 0 0 0.75rem;
+}
+
+.latex-content p:last-child {
+  margin-bottom: 0;
+}
+
+.latex-content .katex-display {
+  margin: 0.75rem 0;
+  overflow-x: auto;
+}
+
+.problem-source {
+  display: inline-block;
+  margin-top: 0.85rem;
+  color: var(--accent);
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.problem-source:hover {
+  text-decoration: underline;
 }
 
 .problem-title-row {
@@ -305,6 +402,11 @@ html.theme-light .background-glow {
   margin: 0;
   font-size: 1rem;
   line-height: 1.4;
+  font-weight: 700;
+}
+
+.problem-summary {
+  display: block;
 }
 
 .badges {
@@ -396,6 +498,15 @@ html.theme-light .badge.difficulty {
 
   .panel {
     padding: 0.9rem;
+  }
+
+  .problem-header {
+    flex-direction: column;
+  }
+
+  .problem-header-side {
+    width: 100%;
+    justify-content: space-between;
   }
 
   .problem-title-row {
