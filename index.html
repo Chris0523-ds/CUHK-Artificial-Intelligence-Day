@@ -14,7 +14,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=5" />
     <script>
       (function () {
         try {
@@ -27,8 +27,11 @@
                 : "dark";
           document.documentElement.setAttribute("data-theme", theme);
           document.documentElement.style.colorScheme = theme;
+          document.documentElement.classList.toggle("theme-light", theme === "light");
+          document.documentElement.classList.toggle("theme-dark", theme === "dark");
         } catch (_error) {
           document.documentElement.setAttribute("data-theme", "dark");
+          document.documentElement.classList.add("theme-dark");
         }
       })();
     </script>
@@ -104,7 +107,7 @@
       <p>Built for Artificial Intelligence Day in CUHK-Shenzhen.</p>
     </footer>
 
-    <script src="./theme.js"></script>
+    <script src="./theme.js?v=5"></script>
     <script type="module" src="./script.js"></script>
   </body>
 </html>

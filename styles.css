@@ -76,11 +76,13 @@ body {
   transition: background 0.25s ease, color 0.25s ease;
 }
 
-html[data-theme="dark"] body {
+html[data-theme="dark"] body,
+html.theme-dark body {
   background: radial-gradient(circle at 12% 5%, var(--bg-gradient-1) 0%, var(--bg) 40%, var(--bg-gradient-2) 100%);
 }
 
-html[data-theme="light"] body {
+html[data-theme="light"] body,
+html.theme-light body {
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
 }
 
@@ -97,10 +99,9 @@ html[data-theme="dark"] .background-glow {
     radial-gradient(circle at 20% 90%, var(--glow-2), transparent 35%);
 }
 
-html[data-theme="light"] .background-glow {
-  opacity: 0.45;
-  background: radial-gradient(circle at 88% 12%, var(--glow-1), transparent 35%),
-    radial-gradient(circle at 20% 90%, var(--glow-2), transparent 35%);
+html[data-theme="light"] .background-glow,
+html.theme-light .background-glow {
+  display: none;
 }
 
 .theme-toggle {
@@ -339,19 +340,22 @@ html[data-theme="light"] .background-glow {
   border: 1px solid rgba(116, 163, 255, 0.52);
 }
 
-html[data-theme="light"] .badge.open {
+html[data-theme="light"] .badge.open,
+html.theme-light .badge.open {
   color: #be123c;
   background: rgba(244, 63, 94, 0.12);
   border: 1px solid rgba(244, 63, 94, 0.28);
 }
 
-html[data-theme="light"] .badge.solved {
+html[data-theme="light"] .badge.solved,
+html.theme-light .badge.solved {
   color: #047857;
   background: rgba(16, 185, 129, 0.12);
   border: 1px solid rgba(16, 185, 129, 0.28);
 }
 
-html[data-theme="light"] .badge.difficulty {
+html[data-theme="light"] .badge.difficulty,
+html.theme-light .badge.difficulty {
   color: #1d4ed8;
   background: rgba(37, 99, 235, 0.1);
   border: 1px solid rgba(37, 99, 235, 0.24);
