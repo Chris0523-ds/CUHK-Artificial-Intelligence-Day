@@ -100,16 +100,16 @@ function createProblemCard(problem) {
     : "";
 
   article.innerHTML = `
-    <button
+    <div
       class="problem-header"
-      type="button"
+      role="button"
+      tabindex="0"
       aria-expanded="${isExpanded ? "true" : "false"}"
       aria-controls="details-${problem.id}"
     >
       <span class="problem-header-main">
         <span class="problem-title">${problem.id}: ${problem.title}</span>
         <span class="problem-meta"><strong>Topic:</strong> ${problem.topic}</span>
-        <span class="problem-meta problem-summary">${problem.summary}</span>
       </span>
       <span class="problem-header-side">
         <span class="badges">
@@ -118,7 +118,8 @@ function createProblemCard(problem) {
         </span>
         <span class="expand-icon" aria-hidden="true">${isExpanded ? "▾" : "▸"}</span>
       </span>
-    </button>
+    </div>
+    <p class="problem-meta problem-summary"></p>
     <div
       id="details-${problem.id}"
       class="problem-details${isExpanded ? " is-open" : ""}"
@@ -141,6 +142,7 @@ function createProblemCard(problem) {
   const answerContent = article.querySelector(".answer-content");
   const summaryContent = article.querySelector(".problem-summary");
 
+  summaryContent.textContent = problem.summary;
   questionContent.innerHTML = formatMarkdownLite(problem.question);
   answerContent.innerHTML = formatMarkdownLite(problem.answer);
 
@@ -148,18 +150,23 @@ function createProblemCard(problem) {
     toggleProblem(problem.id);
   });
 
-  void renderProblemCardLatex(summaryContent, questionContent, answerContent, isExpanded);
+  summaryContent.addEventListener("click", () => {
+    toggleProblem(problem.id);
+  });
+
+  header.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      toggleProblem(problem.id);
+    }
+  });
 
   return article;
 }
 
-async function renderProblemCardLatex(summaryContent, questionContent, answerContent, isExpanded) {
-  await renderLatexInElement(summaryContent);
-
-  if (isExpanded) {
-    await renderLatexInElement(questionContent);
-    await renderLatexInElement(answerContent);
-  }
+async function renderProblemListLatex() {
+  await waitForKaTeX();
+  await renderLatexInElement(elements.problemList);
 }
 
 function renderProblemCards(problems) {
@@ -175,6 +182,7 @@ function renderProblemCards(problems) {
 
   const cards = problems.map((problem) => createProblemCard(problem));
   elements.problemList.append(...cards);
+  void renderProblemListLatex();
 }
 
 function renderDifficultyOptions(bank) {
