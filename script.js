@@ -1,5 +1,5 @@
 import { getBankById, getDifficultyOptions, problemBanks } from "./data/problemBanks.js";
-import { renderLatexInElement } from "./utils/latex.js";
+import { renderLatexInElement, waitForKaTeX } from "./utils/latex.js";
 
 const elements = {
   bankTabs: document.querySelector("#bank-tabs"),
@@ -139,6 +139,7 @@ function createProblemCard(problem) {
   const header = article.querySelector(".problem-header");
   const questionContent = article.querySelector(".question-content");
   const answerContent = article.querySelector(".answer-content");
+  const summaryContent = article.querySelector(".problem-summary");
 
   questionContent.innerHTML = formatMarkdownLite(problem.question);
   answerContent.innerHTML = formatMarkdownLite(problem.answer);
@@ -147,12 +148,18 @@ function createProblemCard(problem) {
     toggleProblem(problem.id);
   });
 
-  if (isExpanded) {
-    renderLatexInElement(questionContent);
-    renderLatexInElement(answerContent);
-  }
+  void renderProblemCardLatex(summaryContent, questionContent, answerContent, isExpanded);
 
   return article;
+}
+
+async function renderProblemCardLatex(summaryContent, questionContent, answerContent, isExpanded) {
+  await renderLatexInElement(summaryContent);
+
+  if (isExpanded) {
+    await renderLatexInElement(questionContent);
+    await renderLatexInElement(answerContent);
+  }
 }
 
 function renderProblemCards(problems) {
@@ -251,7 +258,7 @@ function setupEventListeners() {
   });
 }
 
-function init() {
+async function init() {
   if (problemBanks.length === 0) {
     elements.title.textContent = "No problem bank available";
     elements.description.textContent = "Add one in data/problemBanks.js to get started.";
@@ -259,6 +266,7 @@ function init() {
     return;
   }
 
+  await waitForKaTeX();
   setupEventListeners();
   render();
 }
