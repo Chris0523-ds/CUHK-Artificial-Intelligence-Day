@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Artificial Intelligence Day in CUHK-Shenzhen</title>
+    <meta
+      name="description"
+      content="A modern, extensible problem-bank website for Artificial Intelligence Day in CUHK-Shenzhen."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="background-glow"></div>
+    <header class="hero">
+      <p class="hero-badge">Knowledge Platform</p>
+      <h1>Artificial Intelligence Day in CUHK-Shenzhen</h1>
+      <p class="hero-subtitle">
+        Explore curated problem banks, track solved and open items, and grow your collection over
+        time.
+      </p>
+    </header>
+
+    <main class="layout">
+      <section class="panel">
+        <div class="panel-heading">
+          <h2>Problem Banks</h2>
+          <p>Switch between banks and browse all related problems.</p>
+        </div>
+        <div id="bank-tabs" class="bank-tabs" role="tablist" aria-label="Problem banks"></div>
+      </section>
+
+      <section class="panel controls-panel">
+        <div class="panel-heading">
+          <h2>Search & Filters</h2>
+          <p>Quickly find a problem by keyword, status, or difficulty.</p>
+        </div>
+        <div class="controls-grid">
+          <label class="control">
+            <span>Search</span>
+            <input id="search-input" type="text" placeholder="e.g. graph, optimization, RL" />
+          </label>
+          <label class="control">
+            <span>Status</span>
+            <select id="status-filter">
+              <option value="all">All</option>
+              <option value="open">Open</option>
+              <option value="solved">Solved</option>
+            </select>
+          </label>
+          <label class="control">
+            <span>Difficulty</span>
+            <select id="difficulty-filter">
+              <option value="all">All</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-heading">
+          <h2 id="active-bank-title">Problems</h2>
+          <p id="active-bank-description"></p>
+        </div>
+        <div id="stats" class="stats"></div>
+        <div id="problem-list" class="problem-list"></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Built for Artificial Intelligence Day in CUHK-Shenzhen.</p>
+    </footer>
+
+    <script type="module" src="./script.js"></script>
+  </body>
+</html>
